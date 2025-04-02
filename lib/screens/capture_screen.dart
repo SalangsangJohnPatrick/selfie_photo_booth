@@ -14,6 +14,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
   final ImagePicker _picker = ImagePicker();
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  late PhotoProvider photoProvider;
   int _photosTaken = 0;
   bool _isProcessing = false;
 
@@ -30,6 +31,13 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         curve: Curves.easeInOut,
       ),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    photoProvider = Provider.of<PhotoProvider>(context);
+    _photosTaken = photoProvider.photos.length;
   }
 
   @override
@@ -96,8 +104,8 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
   Widget build(BuildContext context) {
     final photoProvider = Provider.of<PhotoProvider>(context);
     final total = photoProvider.layoutColumns == 4 ? 4 : 6;
-    final remaining = total - _photosTaken;
-    final progress = _photosTaken / total;
+    final remaining = photoProvider.remainingPhotos;
+    final progress = photoProvider.completionPercentage;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -110,13 +118,6 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
             fontWeight: FontWeight.bold,
             fontSize: 24,
             color: Colors.white,
-            shadows: [
-              Shadow(
-                offset: Offset(1, 1),
-                blurRadius: 3.0,
-                color: Color.fromARGB(150, 0, 0, 0),
-              ),
-            ],
           ),
         ),
         centerTitle: true,
@@ -404,7 +405,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
               right: 8,
               child: GestureDetector(
                 onTap: () {
-                  Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
+                  Provider.of<PhotoProvider>(context, listen: false).removePhoto(index);
                   setState(() {
                     _photosTaken--;
                   });
