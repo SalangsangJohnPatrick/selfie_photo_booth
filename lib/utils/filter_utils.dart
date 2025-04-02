@@ -12,6 +12,7 @@ Future<File?> applyFilter(BuildContext context, File imageFile) async {
         title: Text('Select Filter'),
         image: image,
         filters: presetFiltersList,
+        filename: imageFile.path.split('/').last,
       ),
     ),
   );
