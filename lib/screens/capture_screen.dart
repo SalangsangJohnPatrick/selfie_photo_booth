@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:selfie_photo_booth/providers/photo_provider.dart';
+import 'package:selfie_photo_booth/screens/edit_screen.dart';
 
 class CaptureScreen extends StatefulWidget {
   @override
@@ -287,9 +288,13 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                                           backgroundColor: Colors.pinkAccent,
                                         ),
                                         onPressed: () {
-                                          // Navigate to results screen (you'll need to create this)
                                           Navigator.pop(context);
-                                          Navigator.pop(context);
+                                          Navigator.push(
+                                            context, 
+                                            MaterialPageRoute(
+                                              builder: (context) => EditScreen(),
+                                            ),
+                                          );
                                         },
                                         child: Text('Save & Finish'),
                                       ),
