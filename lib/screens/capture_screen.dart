@@ -287,7 +287,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Continue Editing'),
+                                        child: Text('Continue Capturing', style: TextStyle(color: Colors.grey.shade700)),
                                       ),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
@@ -302,7 +302,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                                             ),
                                           );
                                         },
-                                        child: Text('Save & Finish'),
+                                        child: Text('Proceed to Edit', style: TextStyle(color: Colors.white)),
                                       ),
                                     ],
                                   ),
