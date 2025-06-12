@@ -594,7 +594,6 @@ class _EditScreenState extends State<EditScreen> with SingleTickerProviderStateM
             width: constraints.maxWidth,
             height: constraints.maxHeight,
             child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 1,
                 childAspectRatio: 3/4,  // Portrait aspect ratio
@@ -616,7 +615,6 @@ class _EditScreenState extends State<EditScreen> with SingleTickerProviderStateM
             width: constraints.maxWidth,
             height: constraints.maxHeight,
             child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 3/4,  // Portrait aspect ratio

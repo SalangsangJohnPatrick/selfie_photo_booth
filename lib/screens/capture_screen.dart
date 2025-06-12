@@ -246,7 +246,10 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                         icon: Icons.photo_library,
                         label: 'Gallery',
                         color: Colors.purple.shade700,
-                        onPressed: _pickFromGallery,
+                        onPressed: _photosTaken < total
+                            ? () {
+                                _pickFromGallery();
+                            } : null,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -259,7 +262,10 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                           label: 'Take Photo',
                           color: Colors.white,
                           textColor: Colors.pinkAccent,
-                          onPressed: _capturePhoto,
+                          onPressed: _photosTaken < total
+                              ? () {
+                                  _capturePhoto();
+                              } : null,
                           isMain: true,
                         ),
                       ),
