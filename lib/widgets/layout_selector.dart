@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:selfie_photo_booth/providers/photo_provider.dart';
+import 'package:selfix/providers/photo_provider.dart';
 
 class LayoutSelector extends StatefulWidget {
   @override

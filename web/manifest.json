@@ -1,6 +1,6 @@
 {
-    "name": "selfie_photo_booth",
-    "short_name": "selfie_photo_booth",
+    "name": "selfix",
+    "short_name": "selfix",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:selfie_photo_booth/providers/photo_provider.dart';
-import 'package:selfie_photo_booth/models/photo.dart';
-import 'package:selfie_photo_booth/utils/filter_utils.dart';
-import 'package:selfie_photo_booth/utils/border_utils.dart';
-import 'package:selfie_photo_booth/utils/caption_utils.dart';
+import 'package:selfix/providers/photo_provider.dart';
+import 'package:selfix/models/photo.dart';
+import 'package:selfix/utils/filter_utils.dart';
+import 'package:selfix/utils/border_utils.dart';
+import 'package:selfix/utils/caption_utils.dart';
 
 class EditScreen extends StatefulWidget {
   @override

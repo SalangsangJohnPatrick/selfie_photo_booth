@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:selfie_photo_booth/providers/photo_provider.dart';
-import 'package:selfie_photo_booth/screens/edit_screen.dart';
+import 'package:selfix/providers/photo_provider.dart';
+import 'package:selfix/screens/edit_screen.dart';
 
 class CaptureScreen extends StatefulWidget {
   @override

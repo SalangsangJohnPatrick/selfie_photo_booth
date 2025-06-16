@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:selfie_photo_booth/models/photo.dart';
+import 'package:selfix/models/photo.dart';
 
 enum BoothLayout {
   vertical, // 4x1

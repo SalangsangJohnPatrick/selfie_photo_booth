@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "selfie_photo_booth" "\0"
+            VALUE "FileDescription", "selfix" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "selfie_photo_booth" "\0"
+            VALUE "InternalName", "selfix" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "selfie_photo_booth.exe" "\0"
-            VALUE "ProductName", "selfie_photo_booth" "\0"
+            VALUE "OriginalFilename", "selfix.exe" "\0"
+            VALUE "ProductName", "selfix" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

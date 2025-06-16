@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:selfie_photo_booth/screens/home_screen.dart';
-import 'package:selfie_photo_booth/providers/photo_provider.dart';
+import 'package:selfix/screens/home_screen.dart';
+import 'package:selfix/providers/photo_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {

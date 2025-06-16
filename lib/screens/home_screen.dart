@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:selfie_photo_booth/screens/capture_screen.dart';
-import 'package:selfie_photo_booth/widgets/layout_selector.dart';
+import 'package:selfix/screens/capture_screen.dart';
+import 'package:selfix/widgets/layout_selector.dart';
 import 'package:flutter/services.dart';
 
 class HomeScreen extends StatelessWidget {
