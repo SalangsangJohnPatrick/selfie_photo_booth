@@ -59,7 +59,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/selfix-logo.ico"
+  image_path: "assets/icon/selfix-logo.png"
 
 # The following section is specific to Flutter packages.
 flutter:
