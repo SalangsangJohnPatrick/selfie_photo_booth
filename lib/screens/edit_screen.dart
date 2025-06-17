@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -247,7 +246,6 @@ class _EditScreenState extends State<EditScreen>
                                           320, // fixed logical size for preview
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
                                         boxShadow: [
                                           BoxShadow(
                                             color: Colors.black26,
@@ -264,10 +262,6 @@ class _EditScreenState extends State<EditScreen>
                                             padding: EdgeInsets.all(12),
                                             decoration: BoxDecoration(
                                               color: _selectedBorderColor,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(16),
-                                                topRight: Radius.circular(16),
-                                              ),
                                             ),
                                             child: SizedBox(
                                               child: _buildPhotoGrid(
@@ -284,15 +278,8 @@ class _EditScreenState extends State<EditScreen>
                                               horizontal: 16,
                                             ),
                                             decoration: BoxDecoration(
-                                              color:
-                                                  captionStyles[_selectedCaptionStyleIndex]
-                                                      .backgroundColor,
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(16),
-                                                bottomRight: Radius.circular(
-                                                  16,
-                                                ),
-                                              ),
+                                              color: captionStyles[_selectedCaptionStyleIndex]
+                                                  .backgroundColor,
                                             ),
                                             child:
                                                 _captionController
@@ -660,7 +647,7 @@ class _EditScreenState extends State<EditScreen>
                   (photo) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: AspectRatio(
-                      aspectRatio: 1 / 1,
+                      aspectRatio: 3 / 2,
                       child: _buildPhotoCell(photo.image, photos.indexOf(photo)),
                     ),
                   ),
@@ -670,7 +657,7 @@ class _EditScreenState extends State<EditScreen>
     } else {
       // Show all photos in a 2-column grid using Wrap
       return Wrap(
-        spacing: 8,
+        spacing: 16,
         runSpacing: 8,
         children:
             photos

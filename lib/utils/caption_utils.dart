@@ -5,16 +5,16 @@ final List<CaptionStyle> captionStyles = [
   CaptionStyle(
     name: 'Default',
     textStyle: TextStyle(
-      fontSize: 16,
+      fontSize: 20,
       fontWeight: FontWeight.w500,
       color: Colors.black87,
     ),
-    backgroundColor: Colors.grey.shade100,
+    backgroundColor: Colors.white,
   ),
   CaptionStyle(
     name: 'Bold Pink',
     textStyle: TextStyle(
-      fontSize: 18,
+      fontSize: 20,
       fontWeight: FontWeight.bold,
       color: Colors.pinkAccent,
     ),
@@ -23,7 +23,7 @@ final List<CaptionStyle> captionStyles = [
   CaptionStyle(
     name: 'White on Black',
     textStyle: TextStyle(
-      fontSize: 16,
+      fontSize: 20,
       fontWeight: FontWeight.w600,
       color: Colors.white,
     ),
@@ -32,7 +32,7 @@ final List<CaptionStyle> captionStyles = [
   CaptionStyle(
     name: 'Blue Italic',
     textStyle: TextStyle(
-      fontSize: 16,
+      fontSize: 20,
       fontStyle: FontStyle.italic,
       color: Colors.blueAccent,
     ),

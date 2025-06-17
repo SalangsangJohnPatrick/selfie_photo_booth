@@ -11,7 +11,8 @@ class CaptureScreen extends StatefulWidget {
   _CaptureScreenState createState() => _CaptureScreenState();
 }
 
-class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProviderStateMixin {
+class _CaptureScreenState extends State<CaptureScreen>
+    with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -27,10 +28,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
       vsync: this,
     );
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
 
@@ -49,27 +47,30 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
 
   Future<void> _capturePhoto() async {
     if (_isProcessing) return;
-    
+
     setState(() {
       _isProcessing = true;
     });
-    
+
     HapticFeedback.mediumImpact();
     _animationController.forward().then((_) => _animationController.reverse());
-    
+
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.camera,
       preferredCameraDevice: CameraDevice.front,
       imageQuality: 90,
     );
-    
+
     if (pickedFile != null) {
-      Provider.of<PhotoProvider>(context, listen: false).addPhoto(File(pickedFile.path));
+      Provider.of<PhotoProvider>(
+        context,
+        listen: false,
+      ).addPhoto(File(pickedFile.path));
       setState(() {
         _photosTaken++;
       });
     }
-    
+
     setState(() {
       _isProcessing = false;
     });
@@ -77,25 +78,28 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
 
   Future<void> _pickFromGallery() async {
     if (_isProcessing) return;
-    
+
     setState(() {
       _isProcessing = true;
     });
-    
+
     HapticFeedback.lightImpact();
-    
+
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 90,
     );
-    
+
     if (pickedFile != null) {
-      Provider.of<PhotoProvider>(context, listen: false).addPhoto(File(pickedFile.path));
+      Provider.of<PhotoProvider>(
+        context,
+        listen: false,
+      ).addPhoto(File(pickedFile.path));
       setState(() {
         _photosTaken++;
       });
     }
-    
+
     setState(() {
       _isProcessing = false;
     });
@@ -124,7 +128,13 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
+            setState(() {
+              _photosTaken = 0;
+            });
+            Navigator.pop(context);
+          },
         ),
         actions: [
           IconButton(
@@ -133,26 +143,35 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
               if (_photosTaken > 0) {
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Reset Photos?'),
-                    content: Text('This will clear all captured photos. Continue?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text('Cancel'),
+                  builder:
+                      (context) => AlertDialog(
+                        title: Text('Reset Photos?'),
+                        content: Text(
+                          'This will clear all captured photos. Continue?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Provider.of<PhotoProvider>(
+                                context,
+                                listen: false,
+                              ).clearPhotos();
+                              setState(() {
+                                _photosTaken = 0;
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Reset',
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
+                          ),
+                        ],
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
-                          setState(() {
-                            _photosTaken = 0;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Text('Reset', style: TextStyle(color: Colors.redAccent)),
-                      ),
-                    ],
-                  ),
                 );
               }
             },
@@ -246,10 +265,12 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                         icon: Icons.photo_library,
                         label: 'Gallery',
                         color: Colors.purple.shade700,
-                        onPressed: _photosTaken < total
-                            ? () {
-                                _pickFromGallery();
-                            } : null,
+                        onPressed:
+                            _photosTaken < total
+                                ? () {
+                                  _pickFromGallery();
+                                }
+                                : null,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -262,10 +283,12 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                           label: 'Take Photo',
                           color: Colors.white,
                           textColor: Colors.pinkAccent,
-                          onPressed: _photosTaken < total
-                              ? () {
-                                  _capturePhoto();
-                              } : null,
+                          onPressed:
+                              _photosTaken < total
+                                  ? () {
+                                    _capturePhoto();
+                                  }
+                                  : null,
                           isMain: true,
                         ),
                       ),
@@ -275,40 +298,61 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                       child: _buildActionButton(
                         icon: Icons.check_circle,
                         label: 'Done',
-                        color: _photosTaken == total ? Colors.green.shade600 : Colors.grey.shade600,
-                        onPressed: _photosTaken == total
-                            ? () {
-                                // Show completion dialog with preview
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Photos Complete!'),
-                                    content: Text('All photos have been captured successfully. Would you like to proceed?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text('Continue Capturing', style: TextStyle(color: Colors.grey.shade700)),
-                                      ),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.pinkAccent,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                            context, 
-                                            MaterialPageRoute(
-                                              builder: (context) => EditScreen(),
+                        color:
+                            _photosTaken == total
+                                ? Colors.green.shade600
+                                : Colors.grey.shade600,
+                        onPressed:
+                            _photosTaken == total
+                                ? () {
+                                  // Show completion dialog with preview
+                                  showDialog(
+                                    context: context,
+                                    builder:
+                                        (context) => AlertDialog(
+                                          title: Text('Photos Complete!'),
+                                          content: Text(
+                                            'All photos have been captured successfully. Would you like to proceed?',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed:
+                                                  () => Navigator.pop(context),
+                                              child: Text(
+                                                'Continue Capturing',
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade700,
+                                                ),
+                                              ),
                                             ),
-                                          );
-                                        },
-                                        child: Text('Proceed to Edit', style: TextStyle(color: Colors.white)),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            : null,
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.pinkAccent,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            EditScreen(),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                'Proceed to Edit',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                  );
+                                }
+                                : null,
                       ),
                     ),
                   ],
@@ -335,9 +379,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         backgroundColor: color,
         foregroundColor: textColor ?? Colors.white,
         padding: EdgeInsets.symmetric(vertical: isMain ? 16 : 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: isMain ? 8 : 4,
       ),
       child: Column(
@@ -368,7 +410,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         padding: EdgeInsets.all(12),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
-          childAspectRatio: 3/4,
+          childAspectRatio: 3 / 4,
           mainAxisSpacing: 12,
         ),
         itemCount: total,
@@ -385,7 +427,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         padding: EdgeInsets.all(12),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 3/4,
+          childAspectRatio: 3 / 4,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
@@ -407,16 +449,16 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.file(
-              photo,
-              fit: BoxFit.cover,
-            ),
+            Image.file(photo, fit: BoxFit.cover),
             Positioned(
               top: 8,
               right: 8,
               child: GestureDetector(
                 onTap: () {
-                  Provider.of<PhotoProvider>(context, listen: false).removePhoto(index);
+                  Provider.of<PhotoProvider>(
+                    context,
+                    listen: false,
+                  ).removePhoto(index);
                   setState(() {
                     _photosTaken--;
                   });
@@ -427,11 +469,7 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
                     color: Colors.black54,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 16,
-                  ),
+                  child: Icon(Icons.close, color: Colors.white, size: 16),
                 ),
               ),
             ),
@@ -443,20 +481,13 @@ class _CaptureScreenState extends State<CaptureScreen> with SingleTickerProvider
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 2,
-          ),
+          border: Border.all(color: Colors.grey.shade300, width: 2),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.add_a_photo,
-                color: Colors.grey.shade400,
-                size: 36,
-              ),
+              Icon(Icons.add_a_photo, color: Colors.grey.shade400, size: 36),
               SizedBox(height: 8),
               Text(
                 'Photo ${index + 1}',
