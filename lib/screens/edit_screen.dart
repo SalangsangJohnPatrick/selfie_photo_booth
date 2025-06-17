@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:selfix/providers/photo_provider.dart';
 import 'package:selfix/models/photo.dart';
@@ -41,76 +45,73 @@ class _EditScreenState extends State<EditScreen>
     super.dispose();
   }
 
+  Future<bool> requestStoragePermission() async {
+    if (Platform.isAndroid) {
+      if (await Permission.manageExternalStorage.isGranted) {
+        return true;
+      }
+
+      var status = await Permission.manageExternalStorage.request();
+      return status.isGranted;
+    } else if (Platform.isIOS) {
+      var status = await Permission.photos.request();
+      return status.isGranted;
+    }
+    return false;
+  }
+
   Future<void> _saveLayout() async {
     if (_isSaving) return;
-
-    setState(() {
-      _isSaving = true;
-    });
+    setState(() => _isSaving = true);
 
     try {
-      // Capture the rendering of the photo grid
+      bool granted = await requestStoragePermission();
+      if (!granted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Permission denied to save image.')),
+        );
+        return;
+      }
+
+      // Capture widget image
       RenderRepaintBoundary boundary =
           _previewKey.currentContext!.findRenderObject()
               as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-      if (byteData != null) {
-        // For demo purposes, we'll show success
-        // In real app, you'd use image_gallery_saver package
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Photo layout saved to gallery!'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
+      // Save to temporary file
+      final tempDir = await getTemporaryDirectory();
+      final file =
+          await File(
+            '${tempDir.path}/selfix_${DateTime.now().millisecondsSinceEpoch}.png',
+          ).create();
+      await file.writeAsBytes(pngBytes);
 
-        // Haptic feedback on success
-        HapticFeedback.heavyImpact();
+      // Initialize MediaStore
+      await MediaStore.ensureInitialized();
 
-        // Show success dialog
-        showDialog(
-          context: context,
-          builder:
-              (context) => AlertDialog(
-                title: Text('Success!'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check_circle, color: Colors.green, size: 48),
-                    SizedBox(height: 16),
-                    Text('Your photo layout has been saved to your gallery.'),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('OK'),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop(); // Return to previous screen
-                    },
-                    child: Text('Back to Home'),
-                  ),
-                ],
-              ),
-        );
-      } else {
-        _showErrorDialog('Failed to process image data.');
-      }
+      MediaStore.appFolder = "Selfix";
+
+      // Save the image to Pictures/Selfix
+      await MediaStore().saveFile(
+        tempFilePath: file.path,
+        dirType: DirType.photo,
+        dirName: DirName.pictures,
+      );
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Saved to gallery!')));
     } catch (e) {
-      _showErrorDialog('Error: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
-      setState(() {
-        _isSaving = false;
-      });
+      setState(() => _isSaving = false);
     }
   }
 
@@ -278,8 +279,9 @@ class _EditScreenState extends State<EditScreen>
                                               horizontal: 16,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: captionStyles[_selectedCaptionStyleIndex]
-                                                  .backgroundColor,
+                                              color:
+                                                  captionStyles[_selectedCaptionStyleIndex]
+                                                      .backgroundColor,
                                             ),
                                             child:
                                                 _captionController
@@ -648,7 +650,10 @@ class _EditScreenState extends State<EditScreen>
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: AspectRatio(
                       aspectRatio: 3 / 2,
-                      child: _buildPhotoCell(photo.image, photos.indexOf(photo)),
+                      child: _buildPhotoCell(
+                        photo.image,
+                        photos.indexOf(photo),
+                      ),
                     ),
                   ),
                 )
