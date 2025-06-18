@@ -38,6 +38,7 @@ dependencies:
   provider: ^6.0.3 # State management
   media_store_plus: ^0.1.3
   permission_handler: ^11.3.1
+  flutter_native_splash: ^2.4.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -62,6 +63,19 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/selfix-logo.png"
+
+flutter_native_splash:
+  image: assets/icon/selfix-logo.png
+  background_image: assets/background-image.png
+  branding: assets/branding-image.png
+  android: true
+  ios: true
+  web: false
+
+  android_12:
+    image: assets/icon/selfix-logo-android-12.png
+    color: "#FFFFFF"
+    branding: assets/branding-image-android-12.png
 
 # The following section is specific to Flutter packages.
 flutter:
