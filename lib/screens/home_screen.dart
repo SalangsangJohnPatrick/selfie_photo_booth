@@ -15,63 +15,137 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          'Selfix Booth',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.black87,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              Colors.blue.shade100,
+              Colors.purple.shade100,
+              Colors.pink.shade50,
+              Colors.blue.shade50,
               Colors.white,
             ],
+            stops: [0.0, 0.3, 0.7, 1.0],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              Text(
-                "Choose Your Layout Style",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.30,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.pinkAccent,
+                    Colors.pinkAccent.withOpacity(0.3),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
                 ),
               ),
-              SizedBox(height: 20),
-              LayoutSelector(),
-              SizedBox(height: 40),
-              Expanded(
-                child: Center(
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Selfix Booth',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Capture Perfect Moments',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withOpacity(0.9),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Choose Your Layout Style",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Select the perfect frame for your photos",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    SizedBox(height: 32),
+
+                    // Layout selector with enhanced container
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: LayoutSelector(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Bottom section with start button
+            Container(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  // Enhanced start button
+                  Container(
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 15,
+                          color: Colors.pinkAccent.withOpacity(0.3),
+                          blurRadius: 20,
                           offset: Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        // Add haptic feedback
                         HapticFeedback.mediumImpact();
-                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => CaptureScreen()),
@@ -80,43 +154,44 @@ class HomeScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.pinkAccent,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 48,
+                          vertical: 20,
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(35),
                         ),
                         elevation: 0,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.camera_alt, size: 28),
-                          SizedBox(width: 12),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.camera_alt, size: 24),
+                          ),
+                          SizedBox(width: 16),
                           Text(
                             'Start Capturing',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 50),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Text(
-                  "Create memories that last forever",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.black54,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
