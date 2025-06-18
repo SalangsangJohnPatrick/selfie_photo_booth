@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -107,9 +106,7 @@ class _EditScreenState extends State<EditScreen>
         context,
       ).showSnackBar(SnackBar(content: Text('Saved to gallery!')));
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _showErrorDialog("Error saving image: $e");
     } finally {
       setState(() => _isSaving = false);
     }

@@ -15,7 +15,7 @@ class SelfiePhotoBoothApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PhotoProvider()),
       ],
       child: MaterialApp(
-        title: 'Selfie Photo Booth',
+        title: 'Selfix',
         theme: ThemeData(
           primarySwatch: Colors.pink,
         ),

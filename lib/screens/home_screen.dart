@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          'Selfie Booth',
+          'Selfix Booth',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
