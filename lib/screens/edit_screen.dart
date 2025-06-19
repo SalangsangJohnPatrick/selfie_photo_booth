@@ -66,8 +66,9 @@ class _EditScreenState extends State<EditScreen>
     try {
       bool granted = await requestStoragePermission();
       if (!granted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Permission denied to save image.')),
+        _showAlertDialog(
+          "Permission Denied",
+          "Please allow storage permissions to save your layout.",
         );
         return;
       }
@@ -102,23 +103,35 @@ class _EditScreenState extends State<EditScreen>
         dirName: DirName.pictures,
       );
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Saved to gallery!')));
+      _showAlertDialog(
+        "Success",
+        "Your layout has been saved to your gallery.",
+      );
     } catch (e) {
-      _showErrorDialog("Error saving image: $e");
+      _showAlertDialog(
+        "Error: $e",
+        "An error occurred while saving your layout. Please try again.",
+      );
     } finally {
       setState(() => _isSaving = false);
     }
   }
 
-  void _showErrorDialog(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
-      ),
+  void _showAlertDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -207,142 +220,97 @@ class _EditScreenState extends State<EditScreen>
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Preview with photos and caption
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.all(24),
-                            child: InteractiveViewer(
-                              minScale: 0.3,
-                              maxScale: 4.0,
-                              boundaryMargin: EdgeInsets.all(80),
-                              child: Center(
-                                child: FittedBox(
-                                  fit: BoxFit.contain,
-                                  child: RepaintBoundary(
-                                    key: _previewKey,
-                                    child: Container(
-                                      width:
-                                          320, // fixed logical size for preview
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: InteractiveViewer(
+                        minScale: 0.3,
+                        maxScale: 4.0,
+                        boundaryMargin: EdgeInsets.all(80),
+                        child: Center(
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: RepaintBoundary(
+                              key: _previewKey,
+                              child: Container(
+                                width: 320, // fixed logical size for preview
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Photos grid
+                                    Container(
+                                      padding: EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black26,
-                                            blurRadius: 10,
-                                            offset: Offset(0, 5),
-                                          ),
-                                        ],
+                                        color: _selectedBorderColor,
                                       ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          // Photos grid
-                                          Container(
-                                            padding: EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: _selectedBorderColor,
-                                            ),
-                                            child: SizedBox(
-                                              child: _buildPhotoGrid(
-                                                photos,
-                                                isVertical,
-                                              ),
-                                            ),
-                                          ),
-                                          // Caption area
-                                          Container(
-                                            width: double.infinity,
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 16,
-                                              horizontal: 16,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  captionStyles[_selectedCaptionStyleIndex]
-                                                      .backgroundColor,
-                                            ),
-                                            child:
-                                                _captionController
-                                                        .text
-                                                        .isNotEmpty
-                                                    ? Text(
-                                                      _captionController.text,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style:
-                                                          captionStyles[_selectedCaptionStyleIndex]
-                                                              .textStyle,
-                                                    )
-                                                    : SizedBox(height: 20),
-                                          ),
-                                        ],
+                                      child: SizedBox(
+                                        child: _buildPhotoGrid(
+                                          photos,
+                                          isVertical,
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    // Caption area
+                                    Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            captionStyles[_selectedCaptionStyleIndex]
+                                                .backgroundColor,
+                                      ),
+                                      child:
+                                          _captionController.text.isNotEmpty
+                                              ? Text(
+                                                _captionController.text,
+                                                textAlign: TextAlign.center,
+                                                style:
+                                                    captionStyles[_selectedCaptionStyleIndex]
+                                                        .textStyle,
+                                              )
+                                              : SizedBox(height: 20),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              // Export button
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: ElevatedButton.icon(
-                  icon:
-                      _isSaving
-                          ? Container(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                              strokeWidth: 2,
-                            ),
-                          )
-                          : Icon(Icons.save_alt),
-                  label: Text(_isSaving ? 'Saving...' : 'Export to Gallery'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 8,
-                    minimumSize: Size(double.infinity, 56),
-                  ),
-                  onPressed:
-                      (_isSaving || photoProvider.isProcessing)
-                          ? null
-                          : _saveLayout,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -357,6 +325,7 @@ class _EditScreenState extends State<EditScreen>
               _buildNavItem(0, Icons.filter, 'Filter'),
               _buildNavItem(1, Icons.border_color, 'Border'),
               _buildNavItem(2, Icons.text_fields, 'Caption'),
+              _buildNavItem(3, Icons.save_alt, 'Export'),
             ],
           ),
         ),
@@ -370,9 +339,20 @@ class _EditScreenState extends State<EditScreen>
 
     return InkWell(
       onTap: () {
-        setState(() {
-          _currentTabIndex = isSelected ? -1 : index;
-        });
+        if (index == 3) {
+          // Export button
+          if (!_isSaving &&
+              !Provider.of<PhotoProvider>(
+                context,
+                listen: false,
+              ).isProcessing) {
+            _saveLayout();
+          }
+        } else {
+          setState(() {
+            _currentTabIndex = isSelected ? -1 : index;
+          });
+        }
         HapticFeedback.lightImpact();
       },
       splashColor: Colors.transparent,
@@ -381,9 +361,18 @@ class _EditScreenState extends State<EditScreen>
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: isSelected ? Colors.pinkAccent : Colors.grey),
+          index == 3 && _isSaving
+              ? Container(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                  strokeWidth: 2,
+                ),
+              )
+              : Icon(icon, color: isSelected ? Colors.pinkAccent : Colors.grey),
           Text(
-            label,
+            _isSaving && index == 3 ? 'Saving...' : label,
             style: TextStyle(
               color: isSelected ? Colors.pinkAccent : Colors.grey,
               fontSize: 12,

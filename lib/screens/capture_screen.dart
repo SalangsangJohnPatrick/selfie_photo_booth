@@ -214,8 +214,8 @@ class _CaptureScreenState extends State<CaptureScreen>
                           remaining > 0 ? '$remaining more to go' : 'Complete!',
                           style: TextStyle(
                             fontSize: 16,
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            fontStyle: FontStyle.italic,
                           ),
                         ),
                       ],
@@ -256,108 +256,9 @@ class _CaptureScreenState extends State<CaptureScreen>
                 ),
               ),
               // Capture buttons
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.photo_library,
-                        label: 'Gallery',
-                        color: Colors.purple.shade700,
-                        onPressed:
-                            _photosTaken < total
-                                ? () {
-                                  _pickFromGallery();
-                                }
-                                : null,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      flex: 2,
-                      child: ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: _buildActionButton(
-                          icon: Icons.camera_alt,
-                          label: 'Take Photo',
-                          color: Colors.white,
-                          textColor: Colors.pinkAccent,
-                          onPressed:
-                              _photosTaken < total
-                                  ? () {
-                                    _capturePhoto();
-                                  }
-                                  : null,
-                          isMain: true,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.check_circle,
-                        label: 'Done',
-                        color:
-                            _photosTaken == total
-                                ? Colors.green.shade600
-                                : Colors.grey.shade600,
-                        onPressed:
-                            _photosTaken == total
-                                ? () {
-                                  // Show completion dialog with preview
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (context) => AlertDialog(
-                                          title: Text('Photos Complete!'),
-                                          content: Text(
-                                            'All photos have been captured successfully. Would you like to proceed?',
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed:
-                                                  () => Navigator.pop(context),
-                                              child: Text(
-                                                'Continue Capturing',
-                                                style: TextStyle(
-                                                  color: Colors.grey.shade700,
-                                                ),
-                                              ),
-                                            ),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.pinkAccent,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (context) =>
-                                                            EditScreen(),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                'Proceed to Edit',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                  );
-                                }
-                                : null,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Redesigned capture buttons section
+              _buildCaptureButtonsSection(total),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -365,36 +266,186 @@ class _CaptureScreenState extends State<CaptureScreen>
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildCaptureButtonsSection(int total) {
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        // Main container with side buttons
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.95),
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 15,
+                offset: Offset(0, 5),
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Gallery button
+              _buildSideButton(
+                icon: Icons.photo_library,
+                label: 'Gallery',
+                color: Colors.purple.shade600,
+                onPressed: _photosTaken < total ? _pickFromGallery : null,
+              ),
+
+              // Spacer for the circular button
+              SizedBox(width: 80),
+
+              // Done button
+              _buildSideButton(
+                icon: Icons.check_circle,
+                label: 'Done',
+                color:
+                    _photosTaken == total
+                        ? Colors.green.shade600
+                        : Colors.grey.shade400,
+                onPressed:
+                    _photosTaken == total
+                        ? () {
+                          // Show completion dialog with preview
+                          showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: Text('Photos Complete!'),
+                                  content: Text(
+                                    'All photos have been captured successfully. Would you like to proceed?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Continue Capturing',
+                                        style: TextStyle(
+                                          color: Colors.grey.shade700,
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.pinkAccent,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Proceed to Edit',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                          );
+                        }
+                        : null,
+              ),
+            ],
+          ),
+        ),
+
+        // Circular Take Photo button positioned above
+        Positioned(
+          top: -10,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: GestureDetector(
+              onTap: _photosTaken < total ? _capturePhoto : null,
+              child: Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors:
+                        _photosTaken < total
+                            ? [
+                              Colors.pinkAccent.shade200,
+                              Colors.pinkAccent.shade400,
+                            ]
+                            : [Colors.grey.shade300, Colors.grey.shade500],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          _photosTaken < total
+                              ? Colors.pinkAccent.withOpacity(0.4)
+                              : Colors.grey.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: Offset(0, 8),
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.camera_alt, size: 32, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSideButton({
     required IconData icon,
     required String label,
     required Color color,
-    Color? textColor,
     required VoidCallback? onPressed,
-    bool isMain = false,
   }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: textColor ?? Colors.white,
-        padding: EdgeInsets.symmetric(vertical: isMain ? 16 : 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: isMain ? 8 : 4,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: isMain ? 36 : 24),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isMain ? 16 : 12,
-              fontWeight: FontWeight.bold,
-            ),
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 80,
+        height: 70,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color:
+              onPressed != null ? color.withOpacity(0.1) : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color:
+                onPressed != null
+                    ? color.withOpacity(0.3)
+                    : Colors.grey.shade300,
+            width: 1,
           ),
-        ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 28,
+              color: onPressed != null ? color : Colors.grey.shade400,
+            ),
+            SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: onPressed != null ? color : Colors.grey.shade500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

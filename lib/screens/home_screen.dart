@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.30,
+              height: MediaQuery.of(context).size.height * 0.25,
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -57,8 +57,8 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                         color: Colors.white,
-                        letterSpacing: 1.2,
                       ),
                     ),
                     SizedBox(height: 8),
@@ -97,7 +97,6 @@ class HomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
-                        fontStyle: FontStyle.italic,
                       ),
                     ),
                     SizedBox(height: 32),
