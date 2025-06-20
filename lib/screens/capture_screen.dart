@@ -112,154 +112,168 @@ class _CaptureScreenState extends State<CaptureScreen>
     final remaining = photoProvider.remainingPhotos;
     final progress = photoProvider.completionPercentage;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          'Capture Photos',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            color: Colors.white,
+    return WillPopScope(
+      onWillPop: () async {
+        Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
+        setState(() {
+          _photosTaken = 0;
+        });
+        
+        return true;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            'Capture Photos',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: Colors.white,
+            ),
           ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
-            setState(() {
-              _photosTaken = 0;
-            });
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.restart_alt, color: Colors.white),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
-              if (_photosTaken > 0) {
-                showDialog(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text('Reset Photos?'),
-                        content: Text(
-                          'This will clear all captured photos. Continue?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('Cancel'),
+              Provider.of<PhotoProvider>(context, listen: false).clearPhotos();
+              setState(() {
+                _photosTaken = 0;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.restart_alt, color: Colors.white),
+              onPressed: () {
+                if (_photosTaken > 0) {
+                  showDialog(
+                    context: context,
+                    builder:
+                        (context) => AlertDialog(
+                          title: Text('Reset Photos?'),
+                          content: Text(
+                            'This will clear all captured photos. Continue?',
                           ),
-                          TextButton(
-                            onPressed: () {
-                              Provider.of<PhotoProvider>(
-                                context,
-                                listen: false,
-                              ).clearPhotos();
-                              setState(() {
-                                _photosTaken = 0;
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Reset',
-                              style: TextStyle(color: Colors.redAccent),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Provider.of<PhotoProvider>(
+                                  context,
+                                  listen: false,
+                                ).clearPhotos();
+                                setState(() {
+                                  _photosTaken = 0;
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Reset',
+                                style: TextStyle(color: Colors.redAccent),
+                              ),
+                            ),
+                          ],
+                        ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.pinkAccent.shade400,
+                Colors.blue.shade100,
+                Colors.white,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                // Photo progress indicator
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Photos: $_photosTaken/$total',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            remaining > 0
+                                ? '$remaining more to go'
+                                : 'Complete!',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ],
                       ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.pinkAccent.shade400,
-              Colors.blue.shade100,
-              Colors.white,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 16),
-              // Photo progress indicator
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Photos: $_photosTaken/$total',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                      SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 10,
+                          backgroundColor: Colors.white.withOpacity(0.3),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
                           ),
                         ),
-                        Text(
-                          remaining > 0 ? '$remaining more to go' : 'Complete!',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 10,
-                        backgroundColor: Colors.white.withOpacity(0.3),
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 24),
-              // Preview grid
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: _buildPhotoGrid(photoProvider),
+                ),
+                SizedBox(height: 24),
+                // Preview grid
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: _buildPhotoGrid(photoProvider),
+                    ),
                   ),
                 ),
-              ),
-              // Capture buttons
-              // Redesigned capture buttons section
-              _buildCaptureButtonsSection(total),
-              SizedBox(height: 20),
-            ],
+                // Capture buttons
+                // Redesigned capture buttons section
+                _buildCaptureButtonsSection(total),
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
